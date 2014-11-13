@@ -1,0 +1,7 @@
+django>=1.5.1
+wheel==0.24.0
+# Additional requirements go here
+
+factory_boy
+
+-e git://github.com/publica-io/django-entropy.git#egg=django-entropy
