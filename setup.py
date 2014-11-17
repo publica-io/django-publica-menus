@@ -29,7 +29,7 @@ setup(
     description="""Your project description goes here""",
     long_description=readme + '\n\n' + history,
     author='Harshad Bhatia',
-    author_email='harsahd@commoncode.com.au',
+    author_email='harshad@commoncode.com.au',
     url='https://github.com/harshadbhatia/django-publica-menus',
     packages=[
         'menus',

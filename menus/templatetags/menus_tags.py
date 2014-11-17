@@ -3,18 +3,14 @@ from menus.models import Menu
 
 register = template.Library()
 
-@register.inclusion_tag('menus/menu_list.html', takes_context=True)
-def menu(context, slug, *args, **kwargs):
-    request = context['view'].request
-
+@register.inclusion_tag('menus/menu_list.html')
+def menu(slug, *args, **kwargs):
     try:
-        query = Menu.objects.get(
+        menu = Menu.objects.get(
             enabled=True,
             slug=slug
-            )
+        )
     except Menu.DoesNotExist, Menu.MultipleObjectsReturned:
-        query = None
+        menu = None
 
-    context["menu"] = query
-
-    return context
+    return menu
