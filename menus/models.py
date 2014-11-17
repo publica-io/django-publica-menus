@@ -80,7 +80,7 @@ class Menu(EnabledMixin, SlugMixin, TitleMixin):
 
 class MenuItem(models.Model):
     menu = models.ForeignKey('Menu', related_name='items')
-    link = models.ForeignKey('Link')
+    link = models.ForeignKey('Link', related_name='links')
     order = models.PositiveIntegerField(default=0)
     is_featured = models.BooleanField(default=False)
     parent = models.ForeignKey('self', null=True, related_name='children', blank=True)
