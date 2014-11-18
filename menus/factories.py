@@ -18,7 +18,6 @@ class MenuFactory(factory.Factory):
         model = Menu
 
     title = factory.Sequence(lambda n: 'Menu%d' % n)
-    slug = factory.Sequence(lambda n: 'Slug%d' % n)
     enabled = random.random < 0.3
 
 
