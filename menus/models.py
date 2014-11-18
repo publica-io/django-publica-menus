@@ -1,9 +1,10 @@
 from django.db import models
 
 from entropy.base import LinkURLMixin, TitleMixin, EnabledMixin, SlugMixin
+from images.mixins import ImageMixin
 
 
-class Link(LinkURLMixin):
+class Link(LinkURLMixin, ImageMixin):
     '''
     Admin defined link for use in menus and about the site.
     '''
