@@ -1,7 +1,16 @@
+{% block menu %}
 {% if menu %}
     {% for item in menu.items.all %}
+      {% if not item.parent %}
         <li{% if item.get_url == current_path %} class="active"{% endif %}>
             <a href="{{ item.get_url }}">{{ item.title }}</a>
         </li>
+        {% for child in item.children.all %}
+          <ul{% if item.get_url == current_path %} class="active"{% endif %}>
+              <a href="{{ child.get_url }}">{{ child.title }}</a>
+          </ul>
+        {% endfor %}
+      {% endif %}
     {% endfor %}
 {% endif %}
+{% endblock %}
