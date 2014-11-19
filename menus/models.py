@@ -1,6 +1,6 @@
 from django.db import models
 
-from entropy.base import LinkURLMixin, TitleMixin, EnabledMixin, SlugMixin
+from entropy.mixins import LinkURLMixin, TitleMixin, EnabledMixin, SlugMixin
 from images.mixins import ImageMixin
 
 
