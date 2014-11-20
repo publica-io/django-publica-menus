@@ -45,30 +45,35 @@ def get_active_parent_or_child(context, template='menus/menu_parent_child.html',
     except MenuItem.DoesNotExist, MenuItem.MultipleObjectsReturned:
         menu_item = None
     # Well get the menu either way
-    try:
-        menu = Menu.objects.prefetch_related('items').get(
-            enabled=True,
-            slug=menu_item.menu.slug
-        )
-    except Menu.DoesNotExist, Menu.MultipleObjectsReturned:
-        menu = None
 
-    # If the link is child
-    if menu_item and menu_item.parent is not None:
-        active_child_url = menu_item.link.get_url()
-        active_parent_url = menu_item.parent.link.get_url()
-        menu_item = menu_item.parent.children.all()
     else:
-        active_parent_url = menu_item.link.get_url()
-        menu_item = menu_item.children.all()
+        
+        try:
+            menu = Menu.objects.prefetch_related('items').get(
+                enabled=True,
+                slug=menu_item.menu.slug
+            )
+        except Menu.DoesNotExist, Menu.MultipleObjectsReturned:
+            menu = None
+
+        # If the link is child
+        if menu_item and menu_item.parent is not None:
+            active_child_url = menu_item.link.get_url()
+            active_parent_url = menu_item.parent.link.get_url()
+            menu_item = menu_item.parent.children.all()
+        else:
+            active_parent_url = menu_item.link.get_url()
+            menu_item = menu_item.children.all()
 
 
-    t = loader.get_template(template)
-    return t.render(Context({
-        'menu': menu,
-        'menu_item': menu_item,
-        'active_child_url': active_child_url,
-        'active_parent_url': active_parent_url,
-        'request': context['request'],
-        'parent': parent
-    }))
+        t = loader.get_template(template)
+        return t.render(Context({
+            'menu': menu,
+            'menu_item': menu_item,
+            'active_child_url': active_child_url,
+            'active_parent_url': active_parent_url,
+            'request': context['request'],
+            'parent': parent
+        }))
+
+    return ''
