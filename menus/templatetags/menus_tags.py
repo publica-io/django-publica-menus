@@ -1,5 +1,4 @@
-from django.template import Library, loader, Context
-from django.template import RequestContext
+from django.template import Library, loader
 
 from menus.models import Menu, MenuItem
 
@@ -12,14 +11,13 @@ def menu(context, slug, template='menus/menu_list.html', *args, **kwargs):
             enabled=True,
             slug=slug
         )
-    except Menu.DoesNotExist, Menu.MultipleObjectsReturned:
+    except (Menu.DoesNotExist, Menu.MultipleObjectsReturned):
         menu = None
 
+    context['menu'] = menu
+
     t = loader.get_template(template)
-    return t.render(Context({
-        'menu': menu,
-        'request': context['request']
-    }))
+    return t.render(context)
 
 
 @register.simple_tag(takes_context=True)
@@ -41,19 +39,17 @@ def get_active_parent_or_child(context, template='menus/menu_parent_child.html',
         menu_item = MenuItem.objects.get(
             link__url=current_url,
         )
-
-    except MenuItem.DoesNotExist, MenuItem.MultipleObjectsReturned:
+    except (MenuItem.DoesNotExist, MenuItem.MultipleObjectsReturned):
         menu_item = None
-    # Well get the menu either way
 
     else:
-        
+
         try:
             menu = Menu.objects.prefetch_related('items').get(
                 enabled=True,
                 slug=menu_item.menu.slug
             )
-        except Menu.DoesNotExist, Menu.MultipleObjectsReturned:
+        except (Menu.DoesNotExist, Menu.MultipleObjectsReturned):
             menu = None
 
         # If the link is child
@@ -67,13 +63,15 @@ def get_active_parent_or_child(context, template='menus/menu_parent_child.html',
 
 
         t = loader.get_template(template)
-        return t.render(Context({
+
+        context.update({
             'menu': menu,
             'menu_item': menu_item,
             'active_child_url': active_child_url,
             'active_parent_url': active_parent_url,
-            'request': context['request'],
             'parent': parent
-        }))
+        })
+
+        html = t.render(context)
 
     return ''
