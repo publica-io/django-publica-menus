@@ -14,8 +14,8 @@ def menu(context, slug, template='menus/menu_list.html', *args, **kwargs):
         )
     except Menu.DoesNotExist, Menu.MultipleObjectsReturned:
         menu = None
-
     t = loader.get_template(template)
+    
     return t.render(Context({
         'menu': menu,
         'request': context['request']
@@ -42,38 +42,37 @@ def get_active_parent_or_child(context, template='menus/menu_parent_child.html',
             link__url=current_url,
         )
 
-    except MenuItem.DoesNotExist, MenuItem.MultipleObjectsReturned:
-        menu_item = None
-    # Well get the menu either way
+    except MenuItem.DoesNotExist:
+        # This means that there is no link or is linke to a menu but is requesting a menu
+        menu_item = MenuItem.objects.get(link__url='/')
 
+    except MenuItem.MultipleObjectsReturned:
+        ..TODO.. A better way to handle this case.
+        menu_item = menu_item = MenuItem.objects.filter(link__url=current_url).first()
+    # Well get the menu either way     
+    try:
+        menu = Menu.objects.prefetch_related('items').get(
+            enabled=True,
+            slug=menu_item.menu.slug
+        )
+    except Menu.DoesNotExist, Menu.MultipleObjectsReturned:
+        menu = None
+    # If the link is child
+    if menu_item and menu_item.parent is not None:
+        active_child_url = menu_item.link.get_url()
+        active_parent_url = menu_item.parent.link.get_url()
+        menu_item = menu_item.parent.children.all()
     else:
-        
-        try:
-            menu = Menu.objects.prefetch_related('items').get(
-                enabled=True,
-                slug=menu_item.menu.slug
-            )
-        except Menu.DoesNotExist, Menu.MultipleObjectsReturned:
-            menu = None
-
-        # If the link is child
-        if menu_item and menu_item.parent is not None:
-            active_child_url = menu_item.link.get_url()
-            active_parent_url = menu_item.parent.link.get_url()
-            menu_item = menu_item.parent.children.all()
-        else:
-            active_parent_url = menu_item.link.get_url()
-            menu_item = menu_item.children.all()
+        active_parent_url = menu_item.link.get_url()
+        menu_item = menu_item.children.all()
 
 
-        t = loader.get_template(template)
-        return t.render(Context({
-            'menu': menu,
-            'menu_item': menu_item,
-            'active_child_url': active_child_url,
-            'active_parent_url': active_parent_url,
-            'request': context['request'],
-            'parent': parent
-        }))
-
-    return ''
+    t = loader.get_template(template)
+    return t.render(Context({
+        'menu': menu,
+        'menu_item': menu_item,
+        'active_child_url': active_child_url,
+        'active_parent_url': active_parent_url,
+        'request': context['request'],
+        'parent': parent
+    }))
