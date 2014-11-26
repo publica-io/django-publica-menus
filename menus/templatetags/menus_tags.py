@@ -47,7 +47,7 @@ def get_active_parent_or_child(context, template='menus/menu_parent_child.html',
         menu_item = MenuItem.objects.get(link__url='/')
 
     except MenuItem.MultipleObjectsReturned:
-        ..TODO.. A better way to handle this case.
+        #..TODO.. A better way to handle this case.
         menu_item = menu_item = MenuItem.objects.filter(link__url=current_url).first()
     # Well get the menu either way     
     try:
