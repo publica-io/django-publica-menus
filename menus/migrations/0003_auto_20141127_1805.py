@@ -17,6 +17,7 @@ def fix_menus(apps, schema_editor):
     for menu in Menu.objects.all():
         try:
             menu.position = new_vals[menu.slug]
+            menu.save()
         except:
             print 'No new value for {}'.format(menu.slug)
 
