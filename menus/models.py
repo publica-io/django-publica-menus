@@ -16,7 +16,7 @@ class Link(LinkURLMixin, ImageMixin):
 
     class Meta:
         verbose_name = 'Link URL'
-        verbose_name_plural = "Re-useable Link URLs for Menu's"
+        verbose_name_plural = "Link URLs (Re-useable for Menu's)"
 
     def __unicode__(self):
         if self.url:
@@ -83,7 +83,7 @@ class Menu(EnabledMixin, SlugMixin, TitleMixin):
     
     class Meta:
         verbose_name = 'Menu'
-        verbose_name_plural = "Menu's with Link URLs"
+        verbose_name_plural = "Menu's (with Link URLs)"
 
 
 class MenuItem(models.Model):
