@@ -3,6 +3,8 @@ from django.db import models
 from entropy.mixins import LinkURLMixin, TitleMixin, EnabledMixin, SlugMixin
 from images.mixins import ImageMixin
 
+from .settings import POSITION_CHOICES
+
 
 class Link(LinkURLMixin, ImageMixin):
     '''
@@ -13,6 +15,10 @@ class Link(LinkURLMixin, ImageMixin):
     # gfk
 
     title = models.CharField(max_length=255)
+
+    class Meta:
+        verbose_name = 'Link URL'
+        verbose_name_plural = "Link URLs (Re-useable for Menu's)"
 
     def __unicode__(self):
         if self.url:
@@ -76,10 +82,19 @@ class Menu(EnabledMixin, SlugMixin, TitleMixin):
     # short_title
     # slug
     # enabled
-    pass
+
+    position = models.CharField(
+        choices=POSITION_CHOICES, 
+        max_length=50
+    )
+    
+    class Meta:
+        verbose_name = 'Menu'
+        verbose_name_plural = "Menu's (with Link URLs)"
 
 
 class MenuItem(models.Model):
+
     menu = models.ForeignKey('Menu', related_name='items')
     link = models.ForeignKey('Link', related_name='links')
     order = models.PositiveIntegerField(default=0)
@@ -88,6 +103,8 @@ class MenuItem(models.Model):
 
     class Meta:
         ordering = ('order', )
+        verbose_name = 'Menu Item with Link URL'
+        verbose_name_plural = 'Menu Items that use Link URLs'
 
     def __unicode__(self):
         return u'%s :: %s' % (
