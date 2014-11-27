@@ -14,6 +14,10 @@ class Link(LinkURLMixin, ImageMixin):
 
     title = models.CharField(max_length=255)
 
+    class Meta:
+        verbose_name = 'Link URL'
+        verbose_name_plural = "Re-useable Link URLs for Menu's"
+
     def __unicode__(self):
         if self.url:
             return u'%s (%s)' % (self.title, self.url)
@@ -76,7 +80,10 @@ class Menu(EnabledMixin, SlugMixin, TitleMixin):
     # short_title
     # slug
     # enabled
-    pass
+    
+    class Meta:
+        verbose_name = 'Menu'
+        verbose_name_plural = "Menu's with Link URLs"
 
 
 class MenuItem(models.Model):
@@ -88,6 +95,8 @@ class MenuItem(models.Model):
 
     class Meta:
         ordering = ('order', )
+        verbose_name = 'Menu Item with Link URL'
+        verbose_name_plural = 'Menu Items that use Link URLs'
 
     def __unicode__(self):
         return u'%s :: %s' % (
