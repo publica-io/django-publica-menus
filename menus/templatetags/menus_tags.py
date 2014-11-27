@@ -12,7 +12,7 @@ def menu_position(context, position, template='menus/menu_list.html', *args, **k
             enabled=True,
             position=position
         )
-    except Menu.DoesNotExist, Menu.MultipleObjectsReturned:
+    except (Menu.DoesNotExist, Menu.MultipleObjectsReturned):
         return ''
     else:
         t = loader.get_template(template)

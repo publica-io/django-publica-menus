@@ -9,7 +9,8 @@ class LinkURLFallbackMiddleware(object):
 
     def process_response(self, request, response):
         '''
-        Look through the Link models to see if we have a Custom URL
+        Look through the Link models to see if we have a Custom URL and if so 
+        call the corresponding view
         '''
 
         if response.status_code != 404:
