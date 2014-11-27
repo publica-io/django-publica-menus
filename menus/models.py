@@ -1,9 +1,8 @@
+from django.conf import settings
 from django.db import models
 
 from entropy.mixins import LinkURLMixin, TitleMixin, EnabledMixin, SlugMixin
 from images.mixins import ImageMixin
-
-from .settings import URL_NAMES
 
 
 class Link(LinkURLMixin, ImageMixin):
@@ -14,21 +13,11 @@ class Link(LinkURLMixin, ImageMixin):
     # url
     # gfk
 
-    # Raises AppRegistryNotReady when calling in model runtime
-    def _get_urls():
-        from django.core import urlresolvers
-
-        resolver = urlresolvers.get_resolver(None)
-        patterns = sorted([
-            (key, value[0][0][0])
-            for key, value in resolver.reverse_dict.items()
-            if isinstance(key, str)
-        ])
-
-        return patterns
-
     title = models.CharField(max_length=255)
-    named_url = models.CharField(max_length=255, choices=URL_NAMES)
+    named_url = models.CharField(
+        max_length=255,
+        choices=getattr(settings, 'MENUS_URL_NAMES', (('index', 'Index'), ))
+    )
 
     def __unicode__(self):
         if self.url:
