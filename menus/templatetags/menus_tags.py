@@ -6,20 +6,19 @@ from menus.models import Menu, MenuItem
 register = Library()
 
 @register.simple_tag(takes_context=True)
-def menu(context, slug, template='menus/menu_list.html', *args, **kwargs):
+def menu_position(context, position, template='menus/menu_list.html', *args, **kwargs):
     try:
         menu = Menu.objects.prefetch_related('items').get(
             enabled=True,
-            slug=slug
+            position=position
         )
     except Menu.DoesNotExist, Menu.MultipleObjectsReturned:
-        menu = None
+        return ''
+    else:
+        t = loader.get_template(template)
+        context['menu'] = menu
 
-    t = loader.get_template(template)
-    return t.render(Context({
-        'menu': menu,
-        'request': context['request']
-    }))
+        return t.render(context)
 
 
 @register.simple_tag(takes_context=True)
@@ -67,13 +66,17 @@ def get_active_parent_or_child(context, template='menus/menu_parent_child.html',
 
 
         t = loader.get_template(template)
-        return t.render(Context({
+
+        context.update({
             'menu': menu,
+            'request': context['request'],
+            'parent': parent,
             'menu_item': menu_item,
             'active_child_url': active_child_url,
             'active_parent_url': active_parent_url,
-            'request': context['request'],
-            'parent': parent
-        }))
+
+            })
+        
+        return t.render(context)
 
     return ''

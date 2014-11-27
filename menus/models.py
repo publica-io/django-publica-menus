@@ -3,6 +3,8 @@ from django.db import models
 from entropy.mixins import LinkURLMixin, TitleMixin, EnabledMixin, SlugMixin
 from images.mixins import ImageMixin
 
+from .settings import POSITION_CHOICES
+
 
 class Link(LinkURLMixin, ImageMixin):
     '''
@@ -80,6 +82,11 @@ class Menu(EnabledMixin, SlugMixin, TitleMixin):
     # short_title
     # slug
     # enabled
+
+    position = models.CharField(
+        choices=POSITION_CHOICES, 
+        max_length=50
+    )
     
     class Meta:
         verbose_name = 'Menu'
@@ -87,6 +94,7 @@ class Menu(EnabledMixin, SlugMixin, TitleMixin):
 
 
 class MenuItem(models.Model):
+
     menu = models.ForeignKey('Menu', related_name='items')
     link = models.ForeignKey('Link', related_name='links')
     order = models.PositiveIntegerField(default=0)
