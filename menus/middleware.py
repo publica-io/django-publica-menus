@@ -22,14 +22,23 @@ class LinkURLFallbackMiddleware(object):
             except Link.DoesNotExist:
                 pass
             else:
-                view, args, kwargs = resolve(link.content_object.get_absolute_url())
-                kwargs['request'] = request
+                url = None
                 try:
-                    response = view(*args, **kwargs)
-                except Http404:
+                    url = link.content_type.model_class().get_list_url()
+                    url = link.content_object.get_absolute_url()
+                except AttributeError:
                     pass
-                else:
-                    response.render()
+
+                if url is not None:
+                    view, args, kwargs = resolve(url)
+
+                    kwargs['request'] = request
+                    try:
+                        response = view(*args, **kwargs)
+                    except Http404:
+                        pass
+                    else:
+                        response.render()
             return response
 
         # Return the original response if any errors happened. Because this
