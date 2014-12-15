@@ -15,6 +15,7 @@ class Link(LinkURLMixin, ImageMixin):
     # gfk
 
     title = models.CharField(max_length=255)
+    open_in_new_tab = models.BooleanField(default=False)
 
     class Meta:
         verbose_name = 'Link URL'
@@ -84,10 +85,10 @@ class Menu(EnabledMixin, SlugMixin, TitleMixin):
     # enabled
 
     position = models.CharField(
-        choices=POSITION_CHOICES, 
+        choices=POSITION_CHOICES,
         max_length=50
     )
-    
+
     class Meta:
         verbose_name = 'Menu'
         verbose_name_plural = "Menu's (with Link URLs)"
